@@ -1,66 +1,101 @@
-import { useRef, useState } from "react"
+import {  useState } from "react"
 import Header from "./Header"
+import { useFormik } from "formik";
 
 export default function Login() {
-  const[isSignIn,setIsSignIn]=useState();
 
-  const name=useRef(null);
-  const email=useRef(null);
-  const password=useRef(null);
+  const formik=useFormik({
+       initialValues:{
+        name:"",
+        email:"",
+        password:""
+       },
+
+       validate:(values)=>{
+         const errors={};
+
+         if(!values.email){
+          errors.email="Email is required";
+         }
+
+         if(!values.name && !isSignIn){
+          errors.name="Name is required";
+         }
+
+         if(!values.password){
+          errors.password="Password is required";
+         }
+         return errors
+       },
+       onSubmit:(values)=>{
+        console.log(values);
+       }
+  })
+  const[isSignIn,setIsSignIn]=useState(true);
+
  
 
   const toggleClick=()=>{
           setIsSignIn(!isSignIn);
   }
 
-  const handleButtonClick=()=>{
 
 
-  }
-
-  const handleSubmit=(e)=>{
-    e.preventDefault();
-  }
   return (
     <div>
         <Header></Header>
         <div className="relative">
           <img src="https://assets.nflxext.com/ffe/siteui/vlv3/4371a395-0e42-46ae-be36-5755eebc638b/web/IN-en-20260209-TRIFECTA-perspective_3a6d8659-ddfe-4547-9584-dce64c02c230_medium.jpg" alt="bg-image" />
       <div className="absolute inset-0 flex items-center justify-center">
-  <form className="bg-black/80 text-white p-10 rounded-lg w-80 min-h-[420px] flex flex-col" onSubmit={handleSubmit}>
+  <form className="bg-black/80 text-white p-10 rounded-lg w-80 min-h-[420px] flex flex-col" onSubmit={formik.handleSubmit}>
     
     <h1 className="font-bold text-2xl mb-6">{isSignIn?"Sign In":"Sign Up"}</h1>
 
     {!isSignIn &&
         <input
-        ref={name}
       type="text"
-      name="username"
+      name="name"
       placeholder="username"
-     
-      
+      value={formik.values.name}
+      onChange={formik.handleChange}
       className="w-full p-3 mb-4 bg-gray-700 rounded outline-none"
+      onBlur={formik.handleBlur}
     />
     }
+
+    
+      {formik.touched.name&& formik.errors.name && (
+        <p className="text-red-500 text-sm mb-3">{formik.errors.name}</p>
+      )}
+    
 
     <input
       type="text"
       name="email"
       placeholder="Email"
-      ref={email}
-   
+    onBlur={formik.handleBlur}
+      value={formik.values.email}
+onChange={formik.handleChange}
       className="w-full p-3 mb-4 bg-gray-700 rounded outline-none"
     />
-
+    {formik.touched.email && formik.errors.email&&(
+      <p className="text-red-500 mb-3 text-sm">{formik.errors.email}</p>
+    )}
     <input
+    name="password"
       type="password"
-    
+      value={formik.values.password}
       placeholder="Password"
-      ref={password}
+      onBlur={formik.handleBlur}
       className="w-full p-3 mb-6 bg-gray-700 rounded outline-none"
+      onChange={formik.handleChange}
     />
 
-    <button className="bg-red-700 py-3 rounded font-semibold hover:bg-red-600" onClick={handleButtonClick}>
+    {formik.touched.password && formik.errors.password&&(
+      <p className="text-red-500 text-sm mb-3">{formik.errors.password}</p>
+    )}
+
+    <button className="bg-red-700 py-3 rounded font-semibold hover:bg-red-600" >
     {isSignIn?"Sign In":"Sign Up"}
     </button>
 
