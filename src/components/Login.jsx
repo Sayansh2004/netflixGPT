@@ -1,32 +1,50 @@
 import {  useState } from "react"
 import Header from "./Header"
 import { useFormik } from "formik";
+import * as Yup from "yup";
 
 export default function Login() {
 
+  const validationSchema = Yup.object({
+  name: Yup.string()
+    .min(2, "Name too short")
+    .max(50, "Name too long"),
+
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+
+  password: Yup.string()
+    .min(8, "Minimum 8 characters")
+    .matches(/[A-Z]/, "Must contain one uppercase letter")
+    .matches(/[a-z]/, "Must contain one lowercase letter")
+    .matches(/[0-9]/, "Must contain one number")
+    .matches(/[@$!%*?&]/, "Must contain one special character")
+    .required("Password is required"),
+});
   const formik=useFormik({
        initialValues:{
         name:"",
         email:"",
         password:""
        },
+        validationSchema:validationSchema,
+      //  validate:(values)=>{
+      //    const errors={};
 
-       validate:(values)=>{
-         const errors={};
+      //    if(!values.email){
+      //     errors.email="Email is required";
+      //    }
 
-         if(!values.email){
-          errors.email="Email is required";
-         }
+      //    if(!values.name && !isSignIn){
+      //     errors.name="Name is required";
+      //    }
 
-         if(!values.name && !isSignIn){
-          errors.name="Name is required";
-         }
-
-         if(!values.password){
-          errors.password="Password is required";
-         }
-         return errors
-       },
+      //    if(!values.password){
+      //     errors.password="Password is required";
+      //    }
+      //    return errors
+      //  },
        onSubmit:(values)=>{
         console.log(values);
        }
