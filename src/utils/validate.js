@@ -1,0 +1,3 @@
+const checkValidData=(email,password)=>{
+    
+}
