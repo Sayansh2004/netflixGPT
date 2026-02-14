@@ -9,6 +9,7 @@ const User=require("./models/user.js");
 const bcrypt=require("bcrypt");
 const cookieParser=require("cookie-parser");
 const jwt=require("jsonwebtoken");
+const cors=require("cors");
 
 const app=express();
 
@@ -23,6 +24,10 @@ const startServer=async()=>{
 
 startServer();
 
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 app.use(express.json());
 app.use(cookieParser());
 app.post("/signup",async(req,res)=>{

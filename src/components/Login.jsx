@@ -2,8 +2,12 @@ import {  useState } from "react"
 import Header from "./Header"
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
+
 
 export default function Login() {
+  const dispatch=useDispatch();
 
   const validationSchema = Yup.object({
   name: Yup.string()
@@ -45,8 +49,36 @@ export default function Login() {
       //    }
       //    return errors
       //  },
-       onSubmit:(values)=>{
-        console.log(values);
+       onSubmit:async(values,{resetForm})=>{
+        try{
+          const url=isSignIn?"http://localhost:3000/login":"http://localhost:3000/signup";
+
+        const res=await fetch(url,
+          {
+            method:"POST",
+            headers:{
+             "Content-Type":"application/json"
+            },
+            body:JSON.stringify(values),
+            credentials:"include"
+          }
+        )
+        
+       
+        if(res.ok){
+           const data=await res.json();
+          dispatch(addUser(data.user));
+          resetForm();
+          
+       
+        }
+        if(!isSignIn){
+          setIsSignIn(true);
+        }
+        }catch(err){
+          console.error("Error : "+err.message);
+        }
+        
        }
   })
   const[isSignIn,setIsSignIn]=useState(true);
@@ -113,7 +145,7 @@ onChange={formik.handleChange}
       <p className="text-red-500 text-sm mb-3">{formik.errors.password}</p>
     )}
 
-    <button className="bg-red-700 py-3 rounded font-semibold hover:bg-red-600" >
+    <button className="bg-red-700 py-3 rounded font-semibold hover:bg-red-600" type="submit" >
     {isSignIn?"Sign In":"Sign Up"}
     </button>
 
