@@ -4,10 +4,13 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import { useNavigate } from "react-router-dom";
+
 
 
 export default function Login() {
   const dispatch=useDispatch();
+  const navigate=useNavigate();
 
   const validationSchema = Yup.object({
   name: Yup.string()
@@ -69,9 +72,11 @@ export default function Login() {
            const data=await res.json();
           dispatch(addUser(data.user));
           resetForm();
+           navigate("/browse");
           
        
         }
+        
         if(!isSignIn){
           setIsSignIn(true);
         }
@@ -141,9 +146,6 @@ onChange={formik.handleChange}
       onChange={formik.handleChange}
     />
 
-    {formik.touched.password && formik.errors.password&&(
-      <p className="text-red-500 text-sm mb-3">{formik.errors.password}</p>
-    )}
 
     <button className="bg-red-700 py-3 rounded font-semibold hover:bg-red-600" type="submit" >
     {isSignIn?"Sign In":"Sign Up"}

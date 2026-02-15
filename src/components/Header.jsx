@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "../utils/userSlice";
-
+import { useNavigate } from "react-router-dom";
 
 export default function Header() {
+  const navigate=useNavigate();
   
   const user = useSelector((store) => store.user);
 
@@ -10,10 +11,14 @@ export default function Header() {
   const handleSignOut=async()=>{
     try{
     await fetch("http://localhost:3000/logout",{
-        method:POST,
+        method:"POST",
         credentials:"include"
       })
-dispatch(removeUser());
+if (res.ok) {
+  dispatch(removeUser());
+  navigate("/login");
+}
+navigate("/login");
     }catch(err){
       console.error("Error : "+err.message);
     }

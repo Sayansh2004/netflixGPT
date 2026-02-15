@@ -1,7 +1,7 @@
 import Login from "./Login";
 import Browse from "./Browse";
 import { createBrowserRouter,RouterProvider } from "react-router-dom";
-
+import ProtectedRoute from "./ProtectedRoute";
 
 
 
@@ -13,7 +13,11 @@ export default function Body() {
         },
         {
             path:"/browse",
-            element:<Browse/>
+            element:
+            <ProtectedRoute>
+                  <Browse/>
+            </ProtectedRoute>
+          
         }
     ])
   return (
