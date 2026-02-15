@@ -10,6 +10,7 @@ const bcrypt=require("bcrypt");
 const cookieParser=require("cookie-parser");
 const jwt=require("jsonwebtoken");
 const cors=require("cors");
+const userAuth = require("./middleware/userAuth.js");
 
 const app=express();
 
@@ -104,6 +105,10 @@ app.post("/logout",(req,res)=>{
     return res.status(200).json({success:true,message:"logged out successfully"});
 })
 
+app.get("/profile",userAuth,(req,res)=>{
+    res.json({success:true,user:req.user})
+})
+
 app.get("/movies",async(req,res)=>{
     try{
         const response=await fetch("https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1",
@@ -122,6 +127,7 @@ app.get("/movies",async(req,res)=>{
 
 
     }catch(err){
+        console.error(err.message);
         return res.status(400).json({success:false,message:"failed to fetch movies : "+err.message})
     }
 })
