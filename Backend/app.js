@@ -103,3 +103,25 @@ app.post("/logout",(req,res)=>{
     res.clearCookie("token");
     return res.status(200).json({success:true,message:"logged out successfully"});
 })
+
+app.get("/movies",async(req,res)=>{
+    try{
+        const response=await fetch("https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1",
+            {
+                method:"GET",
+                headers:{
+                    Authorization:`Bearer ${process.env.TMDB_TOKEN}`,
+                      "Content-Type":"application/json"
+                }
+            }
+
+        );
+
+        const moviesData=await response.json();
+        return res.status(200).json({success:true,data:moviesData});
+
+
+    }catch(err){
+        return res.status(400).json({success:false,message:"failed to fetch movies : "+err.message})
+    }
+})
