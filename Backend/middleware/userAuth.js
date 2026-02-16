@@ -1,4 +1,5 @@
 const jwt=require("jsonwebtoken");
+const userModel=require("../models/user");
 
 const userAuth=async(req,res,next)=>{
     try{
@@ -7,8 +8,13 @@ const userAuth=async(req,res,next)=>{
             throw new Error("Invalid token");
         }
         const decodedObject=jwt.verify(token,process.env.JWT_SECRET);
-        req.user=decodedObject;
-        next();
+        const user=await userModel.findById(decodedObject._id).select("-password");
+      if (!user) {
+      throw new Error("User not found");
+    }
+
+    req.user = user;
+    next();
 
 
     }catch(err){

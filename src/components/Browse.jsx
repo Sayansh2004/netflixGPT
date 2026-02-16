@@ -1,5 +1,7 @@
 import useNowPlayingMovies from "../hooks/useNowPlaying";
 import Header from "./Header";
+import MainContainer from "./MainContainer";
+import SecondaryContainer from "./SecondaryContainer";
 // import { options } from "../utils/constants";
 
 export default function Browse() {
@@ -7,6 +9,8 @@ export default function Browse() {
   return (
     <div>
       <Header></Header>
+      <MainContainer/>
+      <SecondaryContainer/>
     </div>
   )
 }

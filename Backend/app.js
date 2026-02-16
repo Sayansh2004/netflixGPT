@@ -79,7 +79,7 @@ app.post("/login",async(req,res)=>{
             throw new Error("Invalid password");
 
         }
-        const token=await jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:"7d"});
+        const token=await jwt.sign({_id:user._id},process.env.JWT_SECRET,{expiresIn:"7d"});
 
         res.cookie("token",token,{
             httpOnly:true,
@@ -129,5 +129,27 @@ app.get("/movies",async(req,res)=>{
     }catch(err){
         console.error(err.message);
         return res.status(400).json({success:false,message:"failed to fetch movies : "+err.message})
+    }
+})
+
+app.get("/movies/:movieId",async(req,res)=>{
+    try{
+
+        const {movieId}=req.params;
+        const response=await fetch(`https://api.themoviedb.org/3/movie/${movieId}/videos`,
+           { method:"GET",
+            headers:{
+                "Content-Type":"application/json",
+                "Authorization":`Bearer ${process.env.TMDB_TOKEN}`
+
+            }}
+        );
+
+        const data=await response.json();
+        return res.status(200).json({success:true,data});
+        
+    }catch(err){
+        console.error(err.message);
+        return res.status(404).json({success:false,message:"video not found"});
     }
 })
