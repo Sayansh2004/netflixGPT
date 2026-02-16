@@ -1,50 +1,26 @@
-import React, { useEffect } from 'react';
+import useMovieTrailer from "../hooks/useMovieTrailer";
+import { useSelector } from "react-redux";
+import Shimmer from "../shimmer/Shimmer";
 
 export default function VideoBackground({ movieId }) {
+  useMovieTrailer(movieId);
 
-  const getMovieVideos = async () => {
-    try {
-      const res = await fetch(
-        `http://localhost:3000/movies/${movieId}`,
-        { credentials: "include" }
-      );
+  const trailerVideo = useSelector(
+    (store) => store.movies?.trailerVideo
+  );
 
-      const json = await res.json();
+ 
 
-      const videos = json?.data?.results;
-
-      if (!videos || videos.length === 0) {
-        console.warn("No videos found");
-        return;
-      }
-
-      const filterData = videos.filter(
-        video => video.type === "Trailer"
-      );
-
-      const trailer = filterData.length ? filterData[0] : videos[0];
-
-      console.log(trailer);
-
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    if (!movieId) return;
-    getMovieVideos();
-  }, [movieId]);
+  if (!trailerVideo) return <Shimmer/>;
 
   return (
     <div>
       <iframe
-        width="560"
-        height="315"
-        src="https://www.youtube.com/embed/7OUlF8n55Yk"
+        className="w-screen aspect-video"
+        src={`https://www.youtube.com/embed/${trailerVideo.key}?autoplay=1&mute=1&controls=0`}
         title="YouTube video player"
         allow="autoplay; encrypted-media"
-      ></iframe>
+      />
     </div>
   );
 }
