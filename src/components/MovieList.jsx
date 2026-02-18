@@ -1,7 +1,7 @@
 import Moviecard from "./Moviecard"
 
 export default function MovieList({title,movies}) {
-    console.log(movies)
+
   return (
     <div>
         <div className="px-6 bg-black">

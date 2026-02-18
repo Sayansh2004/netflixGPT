@@ -11,6 +11,7 @@ const cookieParser=require("cookie-parser");
 const jwt=require("jsonwebtoken");
 const cors=require("cors");
 const userAuth = require("./middleware/userAuth.js");
+const openAi=require("openai");
 
 const app=express();
 
@@ -31,6 +32,10 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
+
+const openai=new openAi({
+    apiKey:process.env.OPEN_AI_KEY
+})
 app.post("/signup",async(req,res)=>{
     try{
        const {name,email,password}=req.body;
@@ -151,5 +156,33 @@ app.get("/movies/:movieId",async(req,res)=>{
     }catch(err){
         console.error(err.message);
         return res.status(404).json({success:false,message:"video not found"});
+    }
+})
+
+app.post("/recommend",async(req,res)=>{
+    try{
+
+        const {query}=req.body;
+
+        const gptResults=await openai.chat.completions.create({
+            model:"gpt-3.5-turbo",
+            messages:[
+                {
+                    role:"system",
+                    content:"You are a movie recommendation system. Return only 5 movie names separated by commas.Return only a comma-separated list of movie titles. No explanation, no numbering."
+                },
+                {
+                    role:"user",
+                    content:query
+                }
+            ]
+        });
+
+        const movies=gptResults.choices[0].message.content;
+        return res.status(200).json({success:true,message:"Movies recommended successfully",movies});
+
+    }catch(err){
+        console.error(err.message);
+        return res.status(400).json({success:false,message:"failed to fetch recommendations"})
     }
 })
