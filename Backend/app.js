@@ -178,8 +178,33 @@ app.post("/recommend",async(req,res)=>{
             ]
         });
 
-        const movies=gptResults.choices[0].message.content;
-        return res.status(200).json({success:true,message:"Movies recommended successfully",movies});
+
+
+        // const movies=gptResults.choices[0].message.content; The actual output by openAI
+        const movies=gptResults.choices[0].message.content.split(","); // returns array now
+
+
+
+       const searchMovieTMDB = async (movie) => {
+      const res = await fetch(
+        `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(movie)}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.TMDB_TOKEN}`
+          }
+        }
+      );
+
+      const data = await res.json();
+      return data.results[0]; // return first match
+    };
+
+
+        const tmdbResults=await Promise.all(
+            movies.map((movie)=>searchMovieTMDB(movie.trim()))
+        );
+        return res.status(200).json({success:true,message:"Movies recommended successfully",movies:tmdbResults});
 
     }catch(err){
         console.error(err.message);
