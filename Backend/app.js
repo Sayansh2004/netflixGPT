@@ -197,17 +197,25 @@ app.post("/recommend",async(req,res)=>{
       );
 
       const data = await res.json();
-      return data.results[0]; // return first match
+      return data.results; // return first match
     };
 
 
-        const tmdbResults=await Promise.all(
-            movies.map((movie)=>searchMovieTMDB(movie.trim()))
-        );
+        // const tmdbResults=await Promise.all(
+        //     movies.map((movie)=>searchMovieTMDB(movie.trim()))
+        // );
+
+        
+      const tmdbResults = [];
+
+for (const movie of movies) {
+  const result = await searchMovieTMDB(movie.trim());
+  tmdbResults.push(result);
+}
         return res.status(200).json({success:true,message:"Movies recommended successfully",movies:tmdbResults});
 
     }catch(err){
-        console.error(err.message);
-        return res.status(400).json({success:false,message:"failed to fetch recommendations"})
+        console.error(err);
+        return res.status(400).json({success:false,message:err.message})
     }
 })
