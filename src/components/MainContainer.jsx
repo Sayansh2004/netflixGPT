@@ -6,7 +6,7 @@ import VideoBackground from "./VideoBackground";
 export default function MainContainer() {
    const movies=useSelector((store)=>store.movies?.nowPlayingMovies);
 
-   if(movies===null){
+   if(!movies){
     return null;
    }
 

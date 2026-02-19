@@ -24,8 +24,8 @@ export default function GptSearchBar() {
       })
 
       const data=await res.json();
-      dispatch(addGptMovieResult(data));
-      
+      dispatch(addGptMovieResult(data.movies));
+
     
   }
   return (
