@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addGptMovieResult } from "../utils/gptSlice";
 
 export default function GptSearchBar() {
   const [query,setQuery]=useState("");
+  const dispatch=useDispatch();
 
   const handleChange=(e)=>{
    
@@ -21,8 +24,8 @@ export default function GptSearchBar() {
       })
 
       const data=await res.json();
-      console.log(data);
-
+      dispatch(addGptMovieResult(data));
+      
     
   }
   return (
